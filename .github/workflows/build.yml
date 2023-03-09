@@ -129,9 +129,9 @@ jobs:
         path: |
           ~/.cache/go-build
           ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        key: ${{ runner.os }}-go-${{ matrix.go.GOOS }}-${{ matrix.go.GOARCH }}-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-go-
+          ${{ runner.os }}-go-${{ matrix.go.GOOS }}-${{ matrix.go.GOARCH }}-
 
     - name: Set filename
       id: filename
@@ -143,6 +143,9 @@ jobs:
         fi
 
     - name: Build
+      env: 
+        GOOS: ${{ matrix.go.GOOS }}
+        GOARCH: ${{ matrix.go.GOARCH }}
       run: go build -ldflags '-w -s' -o ${{ steps.filename.outputs.name }}
 
     - uses: actions/upload-artifact@v3
