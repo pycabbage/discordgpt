@@ -10,11 +10,38 @@ on:
     - "README.md"
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
+    # matrix
+    strategy:
+      matrix:
+        go:
+        - GOOS: android
+          GOARCH: arm64
+        - GOOS: linux
+          GOARCH: "386"
+        - GOOS: linux
+          GOARCH: amd64
+        - GOOS: linux
+          GOARCH: arm
+        - GOOS: linux
+          GOARCH: arm64
+        - GOOS: darwin
+          GOARCH: amd64
+        - GOOS: darwin
+          GOARCH: arm64
+        - GOOS: windows
+          GOARCH: amd64
+        - GOOS: windows
+          GOARCH: arm64
+
     steps:
     - uses: actions/checkout@v3
 
@@ -23,8 +50,19 @@ jobs:
       with:
         go-version: 1.19
 
-    - name: Build
-      run: go build -v ./...
+    - name: Set filename
+      id: filename
+      run: |
+        if [ "${{ matrix.go.GOOS }}" == "windows" ]; then
+          echo "name=discordgpt-${{ matrix.go.GOOS }}-${{ matrix.go.GOARCH }}.exe" >> $GITHUB_OUTPUT
+        else
+          echo "name=discordgpt-${{ matrix.go.GOOS }}-${{ matrix.go.GOARCH }}" >> $GITHUB_OUTPUT
+        fi
 
-    - name: Test
-      run: go test -v ./...
+    - name: Build
+      run: go build -ldflags '-w -s' -o ${{ steps.filename.outputs.name }}
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: file
+        path: ${{ steps.filename.outputs.name }}
