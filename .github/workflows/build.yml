@@ -24,12 +24,12 @@ jobs:
         go:
         - GOOS: aix
           GOARCH: ppc64
-        - GOOS: android
-          GOARCH: "386"
+        # - GOOS: android
+        #   GOARCH: "386"
         - GOOS: android
           GOARCH: amd64
-        - GOOS: android
-          GOARCH: arm
+        # - GOOS: android
+        #   GOARCH: arm
         - GOOS: android
           GOARCH: arm64
         - GOOS: darwin
@@ -146,6 +146,7 @@ jobs:
       env: 
         GOOS: ${{ matrix.go.GOOS }}
         GOARCH: ${{ matrix.go.GOARCH }}
+        CGO_ENABLED: 0
       run: go build -ldflags '-w -s' -o ${{ steps.filename.outputs.name }}
 
     - uses: actions/upload-artifact@v3
