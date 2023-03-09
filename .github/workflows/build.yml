@@ -64,5 +64,5 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: file
+        name: ${{ steps.filename.outputs.name }}
         path: ${{ steps.filename.outputs.name }}
