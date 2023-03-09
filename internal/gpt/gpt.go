@@ -6,8 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -62,8 +65,17 @@ type ChatCompletionRes struct {
 	Usage   Usage    `json:"usage"`
 }
 
+func Env_load() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
+
 // CreateChatCompletion
 func CreateChatCompletion(ctx context.Context, chatCompletionReq ChatCompletionReq) (ChatCompletionRes, error) {
+	Env_load()
+
 	var chatCompletionRes ChatCompletionRes
 
 	var reqBytes []byte

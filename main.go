@@ -3,14 +3,23 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/joho/godotenv"
 	"github.com/t98s/discordgpt/internal/gpt"
 )
+
+func Env_load() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
 
 // func main() {
 // 	res, err := gpt.CreateChatCompletion(context.Background(), gpt.ChatCompletionReq{
@@ -40,6 +49,8 @@ import (
 // }
 
 func main() {
+	// load .env
+	Env_load()
 	// Create a new session using the DISCORD_TOKEN environment variable from Railway
 	dg, err := discordgo.New("Bot " + os.Getenv("DISCORD_TOKEN"))
 	if err != nil {
@@ -76,9 +87,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if m.ChannelID != "847506880519471104" {
+	if m.ChannelID != os.Getenv("DISCORD_CHANNELID") {
 		return
 	}
+
+	log.Printf("[messageCreate] Message(%s): %s", m.ChannelID, m.Content)
+	// return
 
 	if m.Content == "ping" {
 		s.ChannelMessageSend(m.ChannelID, "Pong 🏓")
@@ -106,6 +120,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	for i, discordMessage := range replyTree {
 		var role string
+		log.Printf("[messageCreate] Message Tree(%s): %s", discordMessage.ChannelID, discordMessage.Content)
 
 		// ここもうちょっと綺麗に書きたいね〜
 		if i%2 == 0 {
