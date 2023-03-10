@@ -195,19 +195,3 @@ jobs:
         tags: ghcr.io/${{ github.repository }}:latest
         build-args: |
           BINARY=discordgpt-linux-amd64
-
-  # deploy:
-  #   needs: build_container
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: install flyctl
-  #     run: |
-  #       curl -L https://fly.io/install.sh | sh
-  #   - name: deploy
-  #     env:
-  #       FLY_API_TOKEN: ${{ secrets.FLYCTL_API_TOKEN }}
-  #     run: |
-  #         export FLYCTL_INSTALL="$HOME/.fly"
-  #         export PATH="$FLYCTL_INSTALL/bin:$PATH"
-  #         flyctl deploy --image ghcr.io/${{ github.repository }}:latest --auto-confirm
