@@ -11,7 +11,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
-	"github.com/t98s/discordgpt/internal/gpt"
+	"github.com/pycabbage/discordgpt/internal/gpt"
 )
 
 func Env_load() {

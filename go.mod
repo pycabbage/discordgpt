@@ -1,4 +1,4 @@
-module github.com/t98s/discordgpt
+module github.com/pycabbage/discordgpt
 
 go 1.18
 
