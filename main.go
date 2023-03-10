@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/comail/colog"
 	"github.com/joho/godotenv"
 	"github.com/pycabbage/discordgpt/internal/gpt"
 )
@@ -17,7 +18,7 @@ import (
 func Env_load() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Printf("warn: loading .env file")
 	}
 }
 
@@ -49,12 +50,20 @@ func Env_load() {
 // }
 
 func main() {
+	colog.SetDefaultLevel(colog.LDebug)
+	colog.SetMinLevel(colog.LTrace)
+	colog.SetFormatter(&colog.StdFormatter{
+		Colors: true,
+		Flag:   log.Ldate | log.Ltime,
+	})
+	colog.Register()
+
 	// load .env
 	Env_load()
 	// Create a new session using the DISCORD_TOKEN environment variable from Railway
 	dg, err := discordgo.New("Bot " + os.Getenv("DISCORD_TOKEN"))
 	if err != nil {
-		fmt.Printf("Error while starting bot: %s", err)
+		log.Printf("error: Error while starting bot: %s", err)
 		return
 	}
 
@@ -67,12 +76,12 @@ func main() {
 	// Connect to the gateway
 	err = dg.Open()
 	if err != nil {
-		fmt.Printf("Error while connecting to gateway: %s", err)
+		log.Printf("error: while connecting to gateway: %s", err)
 		return
 	}
 
 	// Wait until Ctrl+C or another signal is received
-	fmt.Println("The bot is now running. Press Ctrl+C to exit.")
+	log.Printf("info: The bot is now running. Press Ctrl+C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
@@ -81,17 +90,37 @@ func main() {
 	dg.Close()
 }
 
+func contains(s []string, e string) bool {
+	for _, v := range s {
+		if e == v {
+			return true
+		}
+	}
+	return false
+}
+
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Don't proceed if the message author is a bot
 	if m.Author.Bot {
 		return
 	}
 
-	if m.ChannelID != os.Getenv("DISCORD_CHANNELID") {
+	Mentioned := false
+	for _, user := range m.Mentions {
+		if user.ID == s.State.User.ID {
+			Mentioned = true
+		}
+	}
+	if !Mentioned {
 		return
 	}
 
-	log.Printf("[messageCreate] Message(%s): %s", m.ChannelID, m.Content)
+	discordChannelIDs := strings.Split(os.Getenv("DISCORD_CHANNELID"), " ")
+	if contains(discordChannelIDs, m.ChannelID) {
+		return
+	}
+
+	log.Printf("info: Message(%s): %s", m.ChannelID, m.Content)
 	// return
 
 	if m.Content == "ping" {
@@ -120,7 +149,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	for i, discordMessage := range replyTree {
 		var role string
-		log.Printf("[messageCreate] Message Tree(%s): %s", discordMessage.ChannelID, discordMessage.Content)
+		log.Printf("info: Message Tree(%s): %s", discordMessage.ChannelID, discordMessage.Content)
 
 		// ここもうちょっと綺麗に書きたいね〜
 		if i%2 == 0 {

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/comail/colog"
 	"github.com/joho/godotenv"
 )
 
@@ -68,12 +69,20 @@ type ChatCompletionRes struct {
 func Env_load() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Printf("warn: loading .env file")
 	}
 }
 
 // CreateChatCompletion
 func CreateChatCompletion(ctx context.Context, chatCompletionReq ChatCompletionReq) (ChatCompletionRes, error) {
+	colog.SetDefaultLevel(colog.LDebug)
+	colog.SetMinLevel(colog.LTrace)
+	colog.SetFormatter(&colog.StdFormatter{
+		Colors: true,
+		Flag:   log.Ldate | log.Ltime,
+	})
+	colog.Register()
+
 	Env_load()
 
 	var chatCompletionRes ChatCompletionRes
@@ -116,7 +125,7 @@ func sendRequest(ctx context.Context, method string, endpoint string, body io.Re
 		if err != nil {
 			return err
 		}
-		fmt.Println(string(b))
+		log.Printf("error: %s", string(b))
 		return fmt.Errorf("status code: %d, response: %s", res.StatusCode, string(b))
 	}
 

@@ -6,20 +6,15 @@ kill_timeout = 5
 primary_region = "nrt"
 processes = []
 
-[build]
-  builder = "paketobuildpacks/builder:base"
-  buildpacks = ["gcr.io/paketo-buildpacks/go"]
-
 [env]
-  # PORT = "8080"
 
 [experimental]
   auto_rollback = true
 
-# [[services]]
+[[services]]
 #   http_checks = []
 #   internal_port = 8080
-#   processes = ["app"]
+  processes = ["app"]
 #   protocol = "tcp"
 #   script_checks = []
 #   [services.concurrency]
