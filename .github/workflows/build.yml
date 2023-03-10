@@ -24,12 +24,12 @@ jobs:
         go:
         - GOOS: aix
           GOARCH: ppc64
-        - GOOS: android
-          GOARCH: "386"
+        # - GOOS: android
+        #   GOARCH: "386"
         - GOOS: android
           GOARCH: amd64
-        - GOOS: android
-          GOARCH: arm
+        # - GOOS: android
+        #   GOARCH: arm
         - GOOS: android
           GOARCH: arm64
         - GOOS: darwin
@@ -48,10 +48,10 @@ jobs:
           GOARCH: arm64
         - GOOS: illumos
           GOARCH: amd64
-        - GOOS: ios
-          GOARCH: amd64
-        - GOOS: ios
-          GOARCH: arm64
+        # - GOOS: ios
+        #   GOARCH: amd64
+        # - GOOS: ios
+        #   GOARCH: arm64
         - GOOS: js
           GOARCH: wasm
         - GOOS: linux
@@ -141,6 +141,10 @@ jobs:
         else
           echo "name=discordgpt-${{ matrix.go.GOOS }}-${{ matrix.go.GOARCH }}" >> $GITHUB_OUTPUT
         fi
+
+    - name: disable CGO
+      run: |
+        echo "CGO_ENABLED=0" >> $GITHUB_ENV
 
     - name: Build
       env: 
