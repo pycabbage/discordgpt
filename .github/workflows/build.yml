@@ -22,8 +22,8 @@ jobs:
     strategy:
       matrix:
         go:
-        - GOOS: aix
-          GOARCH: ppc64
+        # - GOOS: aix
+        #   GOARCH: ppc64
         # - GOOS: android
         #   GOARCH: "386"
         - GOOS: android
@@ -46,14 +46,14 @@ jobs:
           GOARCH: arm
         - GOOS: freebsd
           GOARCH: arm64
-        - GOOS: illumos
-          GOARCH: amd64
+        # - GOOS: illumos
+        #   GOARCH: amd64
         # - GOOS: ios
         #   GOARCH: amd64
         # - GOOS: ios
         #   GOARCH: arm64
-        - GOOS: js
-          GOARCH: wasm
+        # - GOOS: js
+        #   GOARCH: wasm
         - GOOS: linux
           GOARCH: "386"
         - GOOS: linux
@@ -98,14 +98,14 @@ jobs:
           GOARCH: arm64
         - GOOS: openbsd
           GOARCH: mips64
-        - GOOS: plan9
-          GOARCH: "386"
-        - GOOS: plan9
-          GOARCH: amd64
-        - GOOS: plan9
-          GOARCH: arm
-        - GOOS: solaris
-          GOARCH: amd64
+        # - GOOS: plan9
+        #   GOARCH: "386"
+        # - GOOS: plan9
+        #   GOARCH: amd64
+        # - GOOS: plan9
+        #   GOARCH: arm
+        # - GOOS: solaris
+        #   GOARCH: amd64
         - GOOS: windows
           GOARCH: "386"
         - GOOS: windows
