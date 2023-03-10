@@ -169,4 +169,6 @@ jobs:
       env:
         FLYCTL_API_TOKEN: ${{ secrets.FLYCTL_API_TOKEN }}
       run: |
-        flyctl deploy
+          export FLYCTL_INSTALL="$HOME/.fly"
+          export PATH="$FLYCTL_INSTALL/bin:$PATH"
+          flyctl deploy
